@@ -1,5 +1,6 @@
 import json
 from app.sentiment_analyzer import annotate_posts_with_sentiment
+from app.summarizer import generate_summary
 
 # Load saved Reddit data
 with open("data/reddit_posts.json", "r", encoding="utf-8") as f:
@@ -15,3 +16,8 @@ for post in annotated_posts:
     print(f"[{post['sentiment'].upper()}] {post['title']}")
 
 print("\nSentiment Breakdown:", sentiment_counts)
+
+# from app.summarizer import generate_summary
+
+summary = generate_summary(annotated_posts)
+print("\n📢 Summary:\n", summary)

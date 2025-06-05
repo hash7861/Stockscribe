@@ -1,4 +1,5 @@
 import os
+import sys
 from dotenv import load_dotenv
 import praw
 import json
@@ -32,20 +33,22 @@ def save_posts_to_file(posts, filename="data/reddit_posts.json"):
     os.makedirs("data", exist_ok=True)
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(posts, f, indent=2)
-    print(f"Saved {len(posts)} posts to {filename}")
-
-# Quick test(s)
-# print("Reddit instance created successfully.")
-# print("Sample subreddit title:", reddit.subreddit("stocks").title)
+    print(f"✅ Saved {len(posts)} posts to {filename}")
 
 if __name__ == "__main__":
-    print("Reddit instance created successfully.")
-    print("Sample subreddit title:", reddit.subreddit("stocks").title)
+    # Allow user to specify a search topic
+    topic = sys.argv[1] if len(sys.argv) > 1 else "Tesla"
+    print(f"Reddit instance created successfully.")
+    print(f"📡 Searching r/stocks for '{topic}'...")
 
-    posts = fetch_posts("stocks", "Tesla", limit=10)
-    print(f"\nFound {len(posts)} posts:\n")
-    for post in posts:
-        print("-", post["title"])
+    posts = fetch_posts("stocks", topic, limit=10)
+
+    if posts:
+        print(f"\n🔎 Found {len(posts)} posts:\n")
+        for post in posts:
+            print("-", post["title"])
+    else:
+        print("⚠️ No posts found.")
 
     save_posts_to_file(posts)
-    print("Posts saved to file.")
+    print("\n✅ Scraping complete.")
