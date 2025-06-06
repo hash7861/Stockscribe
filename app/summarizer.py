@@ -18,39 +18,75 @@ def load_summarizer_raw(model_name="sshleifer/distilbart-cnn-12-6"):
         print("❌ Error loading model:", str(e))
         return None, None
 
+def summarize_chunk(chunk_texts, model, tokenizer, max_tokens, chunk_num):
+    chunk_text = "\n".join(chunk_texts)
+    inputs = tokenizer(chunk_text, truncation=True, padding="longest", return_tensors="pt", max_length=max_tokens)
+    print(f"🧠 Token count (Chunk {chunk_num}): {inputs['input_ids'].shape[1]}")
+    print(f"📄 Input preview (Chunk {chunk_num}):\n{chunk_text[:400]}...\n")
+    with torch.no_grad():
+        summary_ids = model.generate(
+            inputs["input_ids"],
+            num_beams=4,
+            length_penalty=2.0,
+            max_length=250,
+            min_length=80,
+            early_stopping=True
+        )
+    return tokenizer.decode(summary_ids[0], skip_special_tokens=True)
+
 def generate_summary(posts, model=None, tokenizer=None, max_tokens=1024):
     if model is None or tokenizer is None:
         return "Summarization pipeline failed to load."
 
-    # Combine posts into a single cleaned string
-    combined_text = "\n".join(
-        f"[{post['sentiment'].upper()}] Post {i+1}: {clean_text(post['title'])}. {clean_text(post.get('text', ''))}"
-        for i, post in enumerate(posts)
-    )
+    chunk_summaries = []
+    current_chunk = []
+    current_token_count = 0
 
-    # Tokenize with truncation
-    inputs = tokenizer(
-        combined_text,
-        truncation=True,
-        padding="longest",
-        return_tensors="pt",
-        max_length=max_tokens
-    )
+    def tokenize_post(post):
+        text = f"[{post['sentiment'].upper()}] {clean_text(post['title'])}. {clean_text(post.get('text', ''))}"
+        return text, tokenizer(text, return_tensors="pt", truncation=False)["input_ids"].shape[1]
 
-    print(f"🧠 Token count: {inputs['input_ids'].shape[1]}")
-    print(f"📄 Input preview:\n{combined_text[:400]}...\n")
+    # Stage 1: Chunk and summarize each set of posts
+    for i, post in enumerate(posts):
+        text, tokens = tokenize_post(post)
+
+        if current_token_count + tokens > max_tokens:
+            chunk_summary = summarize_chunk(current_chunk, model, tokenizer, max_tokens, len(chunk_summaries)+1)
+            chunk_summaries.append(chunk_summary)
+            current_chunk = [text]
+            current_token_count = tokens
+        else:
+            current_chunk.append(text)
+            current_token_count += tokens
+
+    # Final chunk
+    if current_chunk:
+        chunk_summary = summarize_chunk(current_chunk, model, tokenizer, max_tokens, len(chunk_summaries)+1)
+        chunk_summaries.append(chunk_summary)
+
+    # Stage 2: Meta-summary of all chunk summaries
+    meta_input = "\n\n".join(chunk_summaries)
+    meta_inputs = tokenizer(meta_input, truncation=True, padding="longest", return_tensors="pt", max_length=max_tokens)
+
+    print(f"\n🧠 Token count for executive summary: {meta_inputs['input_ids'].shape[1]}")
+    print(f"📄 Executive summary input preview:\n{meta_input[:400]}...\n")
 
     try:
         with torch.no_grad():
-            summary_ids = model.generate(
-                inputs["input_ids"],
+            meta_ids = model.generate(
+                meta_inputs["input_ids"],
                 num_beams=4,
                 length_penalty=2.0,
                 max_length=250,
                 min_length=80,
                 early_stopping=True
             )
-        output = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
-        return output
+        meta_summary = tokenizer.decode(meta_ids[0], skip_special_tokens=True)
     except Exception as e:
-        return f"❌ Summarization failed: {str(e)}"
+        meta_summary = f"❌ Final summary generation failed: {str(e)}"
+
+    # Output all chunk summaries + executive summary
+    return "\n\n".join(
+        [f"📌 Chunk {i+1} Summary:\n{summary}" for i, summary in enumerate(chunk_summaries)]
+        + [f"\n🧠 Executive Summary:\n{meta_summary}"]
+    )
