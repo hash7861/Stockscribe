@@ -17,14 +17,16 @@ for post in annotated_posts:
 
 print("\nSentiment Breakdown:", sentiment_counts)
 
-# ---- Test 1: distilbart-cnn-12-6 ----
-print("\n🔹 Summary with distilbart-cnn-12-6")
-model, tokenizer = load_summarizer_raw("sshleifer/distilbart-cnn-12-6")
-summary = generate_summary(annotated_posts, model=model, tokenizer=tokenizer)
-print(summary)
-
-# ---- Test 2: bart-large-cnn-samsum ----
+# ---- Test 1: bart-large-cnn-samsum ----
+#  More natural, clean summaries, and well structured output
 print("\n🔸 Summary with bart-large-cnn-samsum")
 model, tokenizer = load_summarizer_raw("philschmid/bart-large-cnn-samsum")
 summary = generate_summary(annotated_posts, model=model, tokenizer=tokenizer)
 print(summary)
+
+# ---- Test 2: knkarthick/MEETING_SUMMARY ----
+# Ideal for multiple posts, handles longer texts well
+# print("\n🔹 Summary with knkarthick/MEETING_SUMMARY")
+# model, tokenizer = load_summarizer_raw("knkarthick/MEETING_SUMMARY")
+# summary = generate_summary(annotated_posts, model=model, tokenizer=tokenizer)
+# print(summary)
