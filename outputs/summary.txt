@@ -1,0 +1,24 @@
+📌 Chunk 1 Summary:
+ NVIDIA has been on an insane run lately, up over 20% since mid May and pushing back to all-time highs around $142.92. The stock's up 10-12% straight with barely any pause and options activity is crazy. If it breaks above $147, he's out, but if it goes up to $150, he'll be in. He thinks Google, Apple, Broadcom and NVIDIA are undervalued.
+
+📌 Chunk 2 Summary:
+This week's focus is on Nvidia earnings, Trump tariff updates, and the Fed's preferred inflation gauge. The Nasdaq Composite and Dow Jones Industrial Average dropped about 2.4% last week, while the S&P 500 slid 2.6%. Nvidia is expected to report adjusted earnings per share of $0.88 on revenue of $43.3 billion for the quarter. Okta, Salesforce, CRM, and Costco will also report after the market close.
+
+📌 Chunk 3 Summary:
+Nvidia will launch a new AI chip for China at a significantly lower price than its recently restricted H20 model. The new chip will be based on Nvidia's RTX Pro 6000D, a server-class graphics processor. It is expected to be priced between $6,500 and $8,000. Nvidia's market share in China has plummeted from 95% before 2022, when U.S. export curbs that impacted its products began, to 50% currently.
+
+📌 Chunk 4 Summary:
+Oracle will buy 400,000 GB200 chips from Nvidia to power OpenAI's new data centre in Abilene, Texas. The data centre is expected to be fully operational by mid-2026. It is billed as the first US Stargate project, the $500bn data centre scheme spearheaded by OpenAI and SoftBank. It will provide 1.2 gigawatts of power when it is completed next year, making it one of the largest in the world.
+
+
+🧠 Executive Summary (NEUTRAL):
+This week's focus is on Nvidia earnings, Trump tariff updates, and the Fed's preferred inflation gauge. Nvidia is expected to report adjusted earnings per share of $0.88 on revenue of $43.3 billion for the quarter. Okta, Salesforce, CRM, and Costco will also report after the market close. Oracle will buy 400,000 GB200 chips from Nvidia to power OpenAI's new data centre in Abilene, Texas.
+
+==============================
+
+📌 Chunk 1 Summary:
+Nvidia passed Microsoft in market cap on Tuesday to become the most valuable company in the world. The last time Nvidia was the most-valuable company was on Jan. 24. The company now has a $3.45 trillion market cap. The demand for artificial intelligence chips is exciting investors. NVIDIA is reporting earnings tomorrow. The market is waiting for the report. It feels like the entire market is holding its breath.
+
+
+🧠 Executive Summary (POSITIVE):
+Nvidia passed Microsoft in market cap on Tuesday to become the most valuable company in the world. The last time Nvidia was the most-valuable company was on Jan. 24. The company now has a $3.45 trillion market cap. The demand for artificial intelligence chips is exciting investors. NVIDIA is reporting earnings tomorrow. The market is waiting for the report. It feels like the entire market is holding its breath.

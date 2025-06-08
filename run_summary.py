@@ -1,4 +1,6 @@
 import json
+# Save final summary to outputs/summary.txt
+import os
 from app.sentiment_analyzer import annotate_posts_with_sentiment
 from app.summarizer import load_summarizer_raw, generate_summary
 
@@ -6,10 +8,21 @@ from app.summarizer import load_summarizer_raw, generate_summary
 with open("data/reddit_posts.json", "r", encoding="utf-8") as f:
     posts = json.load(f)
 
-# Annotate sentiments
-annotated_posts = annotate_posts_with_sentiment(posts)
+# Optional: set a keyword filter (e.g., 'NVIDIA')
+keyword_filter = "NVIDIA"
 
-# Print sentiment breakdown
+# Filter posts before annotating
+filtered_posts = [
+    post for post in posts
+    if keyword_filter.lower() in post["title"].lower()
+]
+
+
+# Annotate sentiments
+annotated_posts = annotate_posts_with_sentiment(filtered_posts)
+
+# Print filtered titles
+print(f"\n🧃 Filtered Posts on '{keyword_filter}':")
 sentiment_counts = {"positive": 0, "neutral": 0, "negative": 0}
 for post in annotated_posts:
     sentiment_counts[post["sentiment"]] += 1
@@ -17,16 +30,23 @@ for post in annotated_posts:
 
 print("\nSentiment Breakdown:", sentiment_counts)
 
-# ---- Test 1: bart-large-cnn-samsum ----
-#  More natural, clean summaries, and well structured output
+# Load model
 print("\n🔸 Summary with bart-large-cnn-samsum")
 model, tokenizer = load_summarizer_raw("philschmid/bart-large-cnn-samsum")
-summary = generate_summary(annotated_posts, model=model, tokenizer=tokenizer)
+
+# Generate summaries
+summary = generate_summary(
+    annotated_posts,
+    model=model,
+    tokenizer=tokenizer,
+    max_tokens=1024,
+    keyword=keyword_filter
+)
+
+# Print final summary
 print(summary)
 
-# ---- Test 2: knkarthick/MEETING_SUMMARY ----
-# Ideal for multiple posts, handles longer texts well
-# print("\n🔹 Summary with knkarthick/MEETING_SUMMARY")
-# model, tokenizer = load_summarizer_raw("knkarthick/MEETING_SUMMARY")
-# summary = generate_summary(annotated_posts, model=model, tokenizer=tokenizer)
-# print(summary)
+os.makedirs("outputs", exist_ok=True)
+with open("outputs/summary.txt", "w", encoding="utf-8") as f:
+    f.write(summary)
+print("\n📁 Summary saved to outputs/summary.txt")

@@ -14,18 +14,19 @@ reddit = praw.Reddit(
     user_agent=os.getenv("REDDIT_USER_AGENT")
 )
 
-def fetch_posts(subreddit_name="stocks", query="Tesla", limit=25):
+def fetch_posts(subreddit_name="stocks", query="NVIDIA", limit=10):
     subreddit = reddit.subreddit(subreddit_name)
     posts = []
 
-    for submission in subreddit.search(query, sort="new", limit=limit):
-        posts.append({
-            "title": submission.title,
-            "text": submission.selftext,
-            "score": submission.score,
-            "url": submission.url,
-            "created_utc": submission.created_utc
-        })
+    for submission in subreddit.search(f'title:{query}', sort="new", limit=10):
+        if submission.selftext.strip():  # Skip empty selftext
+            posts.append({
+                "title": submission.title,
+                "text": submission.selftext,
+                "score": submission.score,
+                "url": submission.url,
+                "created_utc": submission.created_utc
+            })
 
     return posts
 
@@ -37,11 +38,11 @@ def save_posts_to_file(posts, filename="data/reddit_posts.json"):
 
 if __name__ == "__main__":
     # Allow user to specify a search topic
-    topic = sys.argv[1] if len(sys.argv) > 1 else "Tesla"
-    print(f"Reddit instance created successfully.")
+    topic = sys.argv[1] if len(sys.argv) > 1 else "NVIDIA"
+    print("Reddit instance created successfully.")
     print(f"📡 Searching r/stocks for '{topic}'...")
 
-    posts = fetch_posts("stocks", topic, limit=10)
+    posts = fetch_posts("stocks", topic, limit=25)
 
     if posts:
         print(f"\n🔎 Found {len(posts)} posts:\n")
